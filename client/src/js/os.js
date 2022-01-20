@@ -99,3 +99,86 @@ const startingIcons = $$(".desktop-icon")
 for (let i = 0; i < startingIcons.length; i++) {
     DragElement(startingIcons[i])
 }
+
+//////////////////////////////////////////////////
+// Event Handler
+//////////////////////////////////////////////////
+
+const alabaster = {};
+
+alabaster.invocationHandlers_ = {
+    'os.actions.Alert': o => {
+        alert(o.message);
+    },
+
+    // Creates a new window element
+    'os.entities.Window': o => {
+        const hasContents = o.contents && Array.isArray(o.contents);
+        const windowId = `win_${alabaster.nextId()}`;
+        const winEl = domutil.create(['div', '. window resizable', `#${windowId}`, [
+            ['div', '. toolbar', [
+                ['span', o.title || 'Untitled Window'],
+                ['button', button => {
+                    button.addEventListener('click', () => {
+                        alabaster.Invoke({
+                            class: 'os.actions.CloseWindow',
+                            ref: windowId,
+                        });
+                    });
+
+                    button.innerHTML = 'X';
+                }]
+            ]],
+            ['div', '. contents', hasContents ? o.contents : []],
+        ]]);
+        document.body.appendChild(winEl);
+        winEl.style.width = '256px';
+        winEl.style.height = '256px';
+        DragElement(winEl);
+    },
+
+    // Destroys a window element
+    'os.actions.CloseWindow': o => {
+        const winEl = document.getElementById(o.ref);
+        winEl.remove();
+    },
+
+    // Displays an error message and logs to console
+    'os.actions.DebugAlert': o => {
+        alert(`Attempt to invoke unrecognized object; it has been logged.`);
+        console.log(o);
+    },
+
+    // Logs to console silently (useful for debugging)
+    'os.actions.Debug': o => {
+        console.log(o);
+    }
+};
+
+
+// Invoke performs an action depending on the "class" property of its input
+// For example, the following will alert the client:
+//   { class: 'os.actions.Alert', message: 'Hello' } 
+alabaster.Invoke = function (object) {
+    // "object.class" will determine what Invoke() does
+    // If there's no "object.class", it'll just be logged
+    if ( ! object.class ) {
+        object = { ...object, class: 'os.actions.Debug' };
+    }
+    let handler = alabaster.invocationHandlers_[object.class];
+    if ( ! handler ) object = { ...object, class: 'os.actions.DebugAlert' };
+    handler = alabaster.invocationHandlers_[object.class];
+    if ( ! handler ) console.error(alabaster.errors.TERMINAL);
+    handler(object);
+};
+
+// Error messages for console logs
+alabaster.errors = {};
+alabaster.errors.TERMINAL = {
+    title: 'TERMINAL ERROR',
+    description: 'this should never happen'
+};
+
+// Incrementing number for window IDs
+alabaster.sequenceId = 0;
+alabaster.nextId = function () { return this.sequenceId++; };
