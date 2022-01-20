@@ -1,0 +1,71 @@
+<!--                                                              
+////////////////////////////////////////////////////////
+////                     Head HTML                  ////
+////////////////////////////////////////////////////////
+-->
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" charset="utf-8">
+    <title>Alabaster Concept</title>
+    <meta name="author" content="Eric Kalpin">
+    <link rel='icon' type='image/png' href='src/icon.png'>
+    <link rel="stylesheet" href="src/main.css">
+    <!--
+    ////////////////////////////////////////////////////////
+    ////                     Scripts                    ////
+    ////////////////////////////////////////////////////////
+    -->
+    <!-- Scripts -->
+    <script defer src="src/js/commonUtils.js"></script>
+    <script defer src="src/js/canvasDrawingApp.js"></script>
+    <script defer src="src/js/main.js"></script>
+    <script defer src="src/js/os.js"></script>
+</head>
+<body id="osMain">
+    <!--
+    ////////////////////////////////////////////////////////
+    ////                     Canvas                     ////
+    ////////////////////////////////////////////////////////
+    -->
+    <div class="window resizable" style="width: 128px; height: 128px">
+        <div class="toolbar">
+            Folder1
+            <button onclick="CloseWindow(this)">X</button>
+        </div>
+        <img src="https://opensource.glassanimals.com/wp-content/themes/opensourceglassanimals/assets/0.7.10/images/icons/folder.gif">
+        <img src="https://opensource.glassanimals.com/wp-content/themes/opensourceglassanimals/assets/0.7.10/images/icons/folder.gif">
+    </div>
+
+
+<!-- AlaPainter -->
+
+    <div class="window">
+        <div class="toolbar">
+            Alapainter
+            <button onclick="CloseWindow(this)">X</button>
+        </div>
+        <canvas id="draw_canvas" width="256px" height="256px"></canvas>
+    </div>
+
+
+
+
+
+    
+    <div  class="desktop-icon">
+    <img  src="src/img/folder icon 1 grey.png">      <br>
+    SECRET STASH
+
+        
+    </div>
+
+
+
+    <div class="window" style="left: 30%; top: 15%">
+        <div class="toolbar">
+            Fish_Tank.gif
+            <button onclick="CloseWindow(this)">X</button>
+        </div>
+        <img src="https://i.pinimg.com/originals/53/d8/3b/53d83b6a60385e07db8531cbcfd3bd5d.gif">
+    </div>
+</body>

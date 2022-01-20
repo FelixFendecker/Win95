@@ -1,0 +1,148 @@
+/*============================================
+Variables
+============================================*/
+:root {
+    --background-color: #000000;
+    --darkShade-color: #1c1c1d;
+    --shade-color: #39383d;
+    --window-color: #4c4c52;
+    --toolbar-color: #88888f;
+    --highlight-color: #9f9fa7;
+    --button-color: #a9a9b3;
+    --buttonHover-color: #c2c2cc;
+
+    --ui-extraSmall: 4px;
+    --ui-small: 10px;
+    --ui-medium: 20px;
+    --ui-large: 36px;
+    --ui-huge: 40px;
+
+    --padding: 20px;
+}
+/*============================================
+Elements
+============================================*/
+body {
+    position: relative;
+    margin: 0px;
+
+    overflow: hidden;
+
+    /* font-family: Arial, Helvetica, sans-serif; */
+    font-family: Terminal, Helvetica, sans-serif;
+    color: white;
+    text-rendering: optimizeSpeed;
+    -webkit-font-smoothing: none;
+    user-select: none;
+
+    background-color: var(--background-color);
+}
+
+/*============================================
+Button
+============================================*/
+
+button {
+    all: unset;
+
+    display: inline-block;
+    position: relative;
+
+    min-width: var(--ui-medium);
+    min-height: var(--ui-medium);
+    margin: var(--ui-extraSmall);
+
+    line-height: var(--ui-medium);
+    text-align: center;
+    align-content: center;
+    color: var(--background-color);
+
+    background-color: var(--button-color);
+    border: var(--ui-extraSmall) solid var(--shade-color);
+    border-top: var(--ui-extraSmall) solid var(--highlight-color);
+    border-bottom: var(--ui-extraSmall) solid var(--darkShade-color);
+
+    /* cursor: pointer; */
+}
+
+button:hover {
+    background-color: var(--buttonHover-color);
+}
+
+button:active {
+    background-color: var(--button-color);
+    border: var(--ui-extraSmall) solid var(--shade-color);
+    border-top: var(--ui-extraSmall) solid var(--darkShade-color);
+    border-bottom: var(--ui-extraSmall) solid var(--highlight-color);
+}
+
+/*============================================
+Window
+============================================*/
+.window {
+    display: inline-block;
+    position: absolute;
+    
+    /* width: 256px;
+    height: 256px; */
+    min-width: calc(var(--ui-huge) * 2);
+    min-height: calc(var(--ui-huge) * 2);
+    padding: var(--ui-extraSmall);
+    padding-top: calc(var(--ui-large) + var(--ui-extraSmall));
+
+    top: 5%;
+    left: 5%;
+
+    background-color: var(--window-color);
+    border: var(--ui-extraSmall) solid var(--shade-color);
+    border-top: var(--ui-extraSmall) solid var(--highlight-color);
+    border-bottom: var(--ui-extraSmall) solid var(--darkShade-color);
+}
+
+
+
+.toolbar {
+    display: inline-block;
+    position: absolute;
+
+    width: calc(100% - var(--ui-small));
+    height: var(--ui-large);
+    padding-left: var(--ui-small);
+
+    top: 0px;
+    left: 0px;
+
+    color: var(--background-color);
+    line-height: var(--ui-huge);
+
+    background-color: var(--toolbar-color);
+
+    /* cursor: grab; */
+}
+
+.toolbar button {
+    position: absolute;
+
+    right: 0px;
+}
+
+.resizable {
+    resize: both;
+    overflow: auto;
+}
+
+/*============================================
+toolbar icons
+============================================*/
+
+.desktop-icon{
+    position:absolute;
+    left:10%;
+    top:10%;
+    text-align: center;
+    width:68px;
+    font-size: 10px;
+    -webkit-user-drag: none;
+    user-drag: none;
+    user-select: none;
+}
