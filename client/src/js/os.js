@@ -160,9 +160,50 @@ alabaster.invocationHandlers_ = {
      'os.actions.CreateFolder': o => {
         const hasContents = o.contents && Array.isArray(o.contents);
         const windowId = `win_${alabaster.nextId()}`;
-        const winEl = domutil.create(['div', '. desktop-icon', "<img src='src/img/folder icon 1 grey.png'><br>Untitled Folder"]);
-        document.body.appendChild(winEl);
+        const winEl = domutil.create(['div', '. desktop-icon',
+            "<img src='src/img/folder icon 1 grey.png'><br>" +
+            (o.label || 'Untitled Folder')
+        ]);
+        const parentEl = o.parentEl || document.body;
+        parentEl.appendChild(winEl);
+        if ( o.primaryAction ) {
+            winEl.addEventListener('dblclick', () => {
+                alabaster.Invoke(o.primaryAction);
+            })
+        }
         DragElement(winEl);
+    },
+    
+    'os.actions.OpenFolder': o => {
+        const path = o.path;
+        alabaster.Invoke({
+            class: 'os.entities.Window',
+            title: path,
+            contents: [
+                ['div', fileRegistry.list(path).map(item => {
+                    return ['div', el => {
+                        let primaryAction;
+                        if ( item.class === 'folder' ) {
+                            primaryAction = {
+                                class: 'os.actions.OpenFolder',
+                                path: path ? (path + '.' + item.key) : item.key
+                            }
+                        } else if ( item.class === 'file' ) {
+                            primaryAction = {
+                                class: 'os.actions.Alert',
+                                message: 'cannot open files yet'
+                            }
+                        }
+                        alabaster.Invoke({
+                            class: 'os.actions.CreateFolder',
+                            label: item.key,
+                            parentEl: el,
+                            primaryAction: primaryAction,
+                        });
+                    }]
+                })]
+            ]
+        });
     }
 };
 
@@ -193,3 +234,9 @@ alabaster.errors.TERMINAL = {
 // Incrementing number for window IDs
 alabaster.sequenceId = 0;
 alabaster.nextId = function () { return this.sequenceId++; };
+
+// Temporary testing code
+(() => {
+    const id = fileRegistry.put({ type: 'html' }, `<h1>Hello!</h1>`);
+    fileRegistry.link('alabaster.system.testFile', id);
+})();
