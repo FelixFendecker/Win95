@@ -135,6 +135,8 @@ alabaster.invocationHandlers_ = {
         winEl.style.width = '256px';
         winEl.style.height = '256px';
         DragElement(winEl);
+
+        
     },
 
     // Destroys a window element
@@ -152,6 +154,15 @@ alabaster.invocationHandlers_ = {
     // Logs to console silently (useful for debugging)
     'os.actions.Debug': o => {
         console.log(o);
+    },
+
+     // Creates a folder
+     'os.actions.CreateFolder': o => {
+        const hasContents = o.contents && Array.isArray(o.contents);
+        const windowId = `win_${alabaster.nextId()}`;
+        const winEl = domutil.create(['div', '. desktop-icon', "<img src='src/img/folder icon 1 grey.png'><br>Untitled Folder"]);
+        document.body.appendChild(winEl);
+        DragElement(winEl);
     }
 };
 
