@@ -106,6 +106,8 @@ for (let i = 0; i < startingIcons.length; i++) {
 
 const alabaster = {};
 
+alabaster.onClose_ = {};
+
 alabaster.invocationHandlers_ = {
     'os.actions.Alert': o => {
         alert(o.message);
@@ -136,13 +138,55 @@ alabaster.invocationHandlers_ = {
         winEl.style.height = '256px';
         DragElement(winEl);
 
-        
+        return windowId;
+    },
+
+    'os.entities.TaskbarItem': o => {
+        const taskId = `task_${alabaster.nextId()}`;
+        const taskEl = domutil.create(
+            ['div', '. taskbar-item', `#${taskId}`, [
+                ['div', '. taskbar-item-label', el => {
+                    el.innerHTML = o.label || '/!\\ No Label';
+                }]
+            ]]
+        );
+        document.getElementById('taskbar_tabs').appendChild(taskEl);
+        return taskId;
+    },
+
+    'os.deletions.TaskbarItem': o => {
+        document.getElementById(o.ref).remove();
+    },
+
+    'os.actions.CreateWindow': o => {
+        const windowId = alabaster.Invoke({
+            ...o,
+            class: 'os.entities.Window'
+        });
+
+        const taskbarId = alabaster.Invoke({
+            class: 'os.entities.TaskbarItem',
+            label: o.title
+        });
+
+        const onClose = alabaster.onClose_[windowId] = [];
+        onClose.push({
+            class: 'os.deletions.TaskbarItem',
+            ref: taskbarId
+        });
     },
 
     // Destroys a window element
     'os.actions.CloseWindow': o => {
         const winEl = document.getElementById(o.ref);
         winEl.remove();
+
+        const onClose = alabaster.onClose_[o.ref];
+        if ( ! onClose ) return;
+
+        for ( let action of onClose ) {
+            alabaster.Invoke(action);
+        }
     },
 
     // Displays an error message and logs to console
@@ -177,8 +221,8 @@ alabaster.invocationHandlers_ = {
     'os.actions.OpenFolder': o => {
         const path = o.path;
         alabaster.Invoke({
-            class: 'os.entities.Window',
-            title: path,
+            class: 'os.actions.CreateWindow',
+            title: path || 'Filesystem',
             contents: [
                 ['div', fileRegistry.list(path).map(item => {
                     return ['div', el => {
@@ -221,7 +265,7 @@ alabaster.Invoke = function (object) {
     if ( ! handler ) object = { ...object, class: 'os.actions.DebugAlert' };
     handler = alabaster.invocationHandlers_[object.class];
     if ( ! handler ) console.error(alabaster.errors.TERMINAL);
-    handler(object);
+    return handler(object);
 };
 
 // Error messages for console logs
@@ -240,3 +284,10 @@ alabaster.nextId = function () { return this.sequenceId++; };
     const id = fileRegistry.put({ type: 'html' }, `<h1>Hello!</h1>`);
     fileRegistry.link('alabaster.system.testFile', id);
 })();
+
+document.getElementById('taskbar_clock').innerHTML =
+    (new Date()).toLocaleTimeString();
+setInterval(() => {
+    document.getElementById('taskbar_clock').innerHTML =
+        (new Date()).toLocaleTimeString();
+}, 1000);
