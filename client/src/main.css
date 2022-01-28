@@ -146,3 +146,45 @@ toolbar icons
     user-drag: none;
     user-select: none;
 }
+
+.taskbar {
+    box-sizing: border-box;
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 22pt;
+    width: 100%;
+    background-color: #CCC;
+    color: #333;
+    padding: 0 5pt;
+    border-top: 2pt solid #FFF;
+}
+
+.taskbar > * {
+    line-height: 20pt;
+}
+
+.taskbar-tabs {
+    flex-grow: 1;
+}
+
+.taskbar-tabs .taskbar-item {
+    border-top: 2pt solid #FFF;
+    border-left: 2pt solid #FFF;
+    border-bottom: 2pt solid #000;
+    border-right: 2pt solid #000;
+    box-sizing: border-box;
+    display: inline-block;
+    margin: 1pt;
+    height: 18pt;
+    line-height: 15pt;
+    padding: 0 5pt;
+    cursor: pointer;
+}
+
+.taskbar-item:hover {
+    background-color: #EEE;
+}
+
+.taskbar-clock {}
