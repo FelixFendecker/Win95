@@ -187,4 +187,30 @@ toolbar icons
     background-color: #EEE;
 }
 
+@keyframes flashing {
+  from {color: red;}
+  to {color: grey;}
+}
+
+.conn-bolt {
+    font-weight: bold;
+    animation-name: flashing;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+.taskbar-5df {
+    font-size: 12pt;
+}
+
+.taskbar-5df > span {
+    display: inline-block;
+    vertical-align: top;
+    line-height: 20pt;
+}
+
+.taskbar-5df > span:nth-child(1) {
+    font-size: 20pt;
+}
+
 .taskbar-clock {}

@@ -1,6 +1,7 @@
 ////////////////////////////////////////
 // required packages
 ////////////////////////////////////////
+const { default: axios } = require('axios');
 const express = require('express');
 require('dotenv/config');
 
@@ -80,6 +81,34 @@ function ImportFile(fName, callback) {
 ////////////////////////////////////////
 // Server setup
 ////////////////////////////////////////
+
+app.get('/weather', async function (req, res) {
+    const ipinfo = (await axios.get('http://ipinfo.io')).data;
+    console.log('ipinfo', ipinfo)
+    const [ lat, lon ] = ipinfo.loc.split(',').map(Number.parseFloat);
+    const weather = (await axios.get(
+        'http://www.7timer.info/bin/civillight.php?' +
+        `lon=${lon}&lat=${lat}` +
+        '&ac=0&lang=en&unit=metric&output=json&tzshift=0'
+    )).data;
+    // https://www.7timer.info/bin/civillight.php?lon=113.2&lat=23.1&ac=0&unit=metric&output=json&tzshift=0
+
+    const days = [];
+    console.log('weather', weather)
+    for ( const item of weather.dataseries ) {
+        days.push({
+            general: item.weather,
+            temp_high: item.temp2m.max,
+            temp_low: item.temp2m.min,
+        });
+    }
+
+    res.json({
+        location: `${ipinfo.city}, ${ipinfo.region}`,
+        days
+    });
+})
+
 // the __dirname is the current directory from where the script is running
 app.use(express.static(__dirname + '/client'));
 
