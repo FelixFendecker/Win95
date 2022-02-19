@@ -107,6 +107,7 @@ for (let i = 0; i < startingIcons.length; i++) {
 const alabaster = {};
 
 alabaster.onClose_ = {};
+alabaster.appData_ = {};
 
 alabaster.invocationHandlers_ = {
     'os.actions.Alert': o => {
@@ -152,6 +153,16 @@ alabaster.invocationHandlers_ = {
         );
         document.getElementById('taskbar_tabs').appendChild(taskEl);
         return taskId;
+    },
+
+    'os.instances.App': o => {
+        const appid = o.appid || 'noname';
+        const instanceId = `app_${appid}_${alabaster.nextId()}`;
+        const data = alabaster.appData_[instanceId] = {};
+        return {
+            id: instanceId,
+            data
+        };
     },
 
     'os.deletions.TaskbarItem': o => {
@@ -285,6 +296,71 @@ alabaster.nextId = function () { return this.sequenceId++; };
     fileRegistry.link('alabaster.system.testFile', id);
 })();
 
+//////////////////////////////////////////////////
+// Weather App
+//////////////////////////////////////////////////
+(async () => {
+    const app = alabaster.Invoke({
+        class: 'os.instances.App',
+        appid: 'weather',
+    })
+    const weather = await (await fetch('/weather')).json();
+    app.data.weather = weather;
+    console.log('weather', weather);
+    const el = document.getElementById('taskbar_5df');
+    el.innerHTML = '';
+    const iconMap = {
+        cloudy: 'cloud',
+        rain: 'cloud-rain',
+        snow: 'cloud-snow',
+    };
+    const limit = 3;
+    let i = 0;
+    for ( let day of weather.days ) {
+        if ( ++i > limit ) break;
+        const dayEl = document.createElement('span');
+        if ( iconMap.hasOwnProperty(day.general) ) {
+            dayEl.classList.add('weather-' + iconMap[day.general]);
+        } else {
+            dayEl.innerHTML = '[' + day.general + ']';
+        }
+        el.appendChild(dayEl);
+    }
+    el.addEventListener('click', () => {
+        alabaster.Invoke({
+            class: 'os.actions.CreateWindow',
+            title: 'Weather',
+            contents: [
+                ['a', 'weather icon attribution', el => {
+                    el.target = '_blank';
+                    el.href = 'https://github.com/jackd248/weather-iconic';
+                }],
+                ['div', [
+                    ['div', `${weather.location}`],
+                    ['div', [
+                        ...weather.days.map(day => {
+                            return ['div', [
+                                ['span',
+                                    `. weather-${iconMap[day.general]}`,
+                                    el => el.style.fontSize = '30pt'
+                                ],
+                                ['span',
+                                    `${day.general}, ${day.temp_low}°C - ${day.temp_high}°C`,
+                                    el => el.style.fontSize = '12pt'
+                                ]
+                            ]];
+                        })
+                    ]]
+                ]]
+            ]
+        });
+    })
+})();
+
+
+//////////////////////////////////////////////////
+// Taskbar Clock
+//////////////////////////////////////////////////
 document.getElementById('taskbar_clock').innerHTML =
     (new Date()).toLocaleTimeString();
 setInterval(() => {

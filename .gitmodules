@@ -1,0 +1,3 @@
+[submodule "client/weather-iconic"]
+	path = client/weather-iconic
+	url = git@github.com:jackd248/weather-iconic.git
